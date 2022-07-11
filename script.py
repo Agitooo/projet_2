@@ -25,8 +25,8 @@ def input_select_cat():
 
 
 def with_picture():
-    text_picture = "Voulez-vous télécharger les images (y/n) : ".strip().lower()
-    with_picture_choice = input(text_picture)
+    text_picture = "Voulez-vous télécharger les images (y/n) : "
+    with_picture_choice = input(text_picture).strip().lower()
     while not (with_picture_choice in allowed_with_picture):
         print("Le choix n'est pas valide")
         with_picture_choice = input(text_picture)
@@ -110,15 +110,15 @@ def get_detail_livre(url_detail_livre, with_picture=False, cat_dir=""):
     image_url = url + soup_detail_livre.find('img').get('src')[6:]
 
     if with_picture:
-        name_picture = title.lower() + ".jpg"
-        char_replace = "!#$%^&*(),': ’"
+        name_picture = title.lower()
+        char_replace = "!#$%^&*()?,': ’\\/\"."
         for char in char_replace:
             name_picture = name_picture.replace(char, "_")
 
         if cat_dir != "":
             name_picture = cat_dir + "/pictures/" + name_picture
 
-        f = open(name_picture, "wb")
+        f = open(name_picture + ".jpg", "wb")
         picture = requests.get(image_url)
         f.write(picture.content)
         f.close()
