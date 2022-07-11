@@ -25,7 +25,7 @@ def input_select_cat():
 
 
 def with_picture():
-    text_picture = "Voulez-vous télécharger les images (y/n)? ".strip().lower()
+    text_picture = "Voulez-vous télécharger les images (y/n) : ".strip().lower()
     with_picture_choice = input(text_picture)
     while not (with_picture_choice in allowed_with_picture):
         print("Le choix n'est pas valide")
@@ -42,8 +42,6 @@ def with_picture():
 # On récupère la clé de la valeur recherchée dans le dictionnaire si elle existe, sinon none
 def key_in_dict(dictionary, key, search):
     return next((i for i, item in enumerate(dictionary) if item[key] == search), None)
-
-
 
 
 def get_dict_all_category():
@@ -73,16 +71,12 @@ def charger_donnees(
         en_tete,
         detail_livre
 ):
-    with open(nom_fichier, 'w', encoding="utf8") as fichier_csv:
+    with open(nom_fichier, 'w', encoding="utf8", newline='') as fichier_csv:
         writer = csv.writer(fichier_csv, delimiter=',')
         # Si le fichier est vide, alors on met l'entete
         if os.path.getsize(nom_fichier) == 0:
             writer.writerow(en_tete)
-        writer.writerows(
-            [
-               detail_livre
-            ]
-        )
+        writer.writerows([detail_livre])
 
 
 def get_detail_livre(url_detail_livre, with_picture=False, cat_dir=""):
@@ -116,132 +110,140 @@ def get_detail_livre(url_detail_livre, with_picture=False, cat_dir=""):
     image_url = url + soup_detail_livre.find('img').get('src')[6:]
 
     if with_picture:
+        name_picture = title.lower() + ".jpg"
+        char_replace = "!#$%^&*(),': ’"
+        for char in char_replace:
+            name_picture = name_picture.replace(char, "_")
+
         if cat_dir != "":
-            name_picture = cat_dir + "/" + title.replace(" ", "_")
-        else:
-            name_picture = title.replace(" ", "_")
-        f = open(name_picture + ".jpg", "wb")
+            name_picture = cat_dir + "/pictures/" + name_picture
+
+        f = open(name_picture, "wb")
         picture = requests.get(image_url)
         f.write(picture.content)
         f.close()
 
-    data_return = [
-        product_page_url, universal_product_code, price_including_tax, price_excluding_tax, number_available,
-        title, product_description, category, review_rating, image_url
-    ]
+    data_return = [product_page_url, universal_product_code, title, price_including_tax, price_excluding_tax,
+                   number_available, product_description, category, review_rating, image_url]
     return data_return
 
 
-def get_list_book_by_category(category_url):
-    reponse_category_par_page = requests.get(category_url)
+def get_list_book_by_category(category_url, link=None, page="index.html"):
+
+    reponse_category_par_page = requests.get(category_url + page)
     page_category_par_page = reponse_category_par_page.content
     soup_category_par_page = BeautifulSoup(page_category_par_page, "html.parser")
 
     all_link_livre = soup_category_par_page.find_all("div", class_="image_container")
+
+    if link is None:
+        link = []
+    for bloc_link_livre in all_link_livre:
+        all_a_livre = bloc_link_livre.find_all("a")
+        for link_livre in all_a_livre:
+            link.append(url + 'catalogue/' + link_livre.get('href')[9:])
 
     have_pagination = soup_category_par_page.find_all("li", class_="next")
     if have_pagination:
         for link_pagination in have_pagination:
             a_pagination = link_pagination.find_all("a")
             url_pagination = a_pagination[0].get('href')
-            # print(url_pagination)
+            # On rappelle la fonction dans laquelle on
+            # est s'il y a une page suivante et on rajoute les livres a la suite
+            link = get_list_book_by_category(category_url, link, url_pagination)
 
-    return all_link_livre
+    return link
 
 
 def get_all_book_detail(category_dict, with_picture=False):
 
     for category in category_dict:
-        category_url = url + category['url']
-
+        url_category_split = category['url'][:-10]
+        category_url = url + url_category_split
+        # retrait de index et rajouté param fontion par defaut page1.html
         all_link_livre = get_list_book_by_category(category_url)
         cat_dir = category["nom"].strip().replace(" ", "_").lower()
         if not os.path.exists(cat_dir):
             os.makedirs(cat_dir)
-        with open(cat_dir + '/' + category["nom"] + ".csv", 'w', encoding="utf8") as fichier_csv:
+        if with_picture and not os.path.exists(cat_dir + "/pictures"):
+            os.makedirs(cat_dir + "/pictures")
+        with open(cat_dir + '/' + category["nom"] + ".csv", 'w', encoding="utf8", newline='') as fichier_csv:
             writer = csv.writer(fichier_csv, delimiter=',')
             # Si le fichier est vide, alors on met l'entete
             if os.path.getsize(cat_dir + '/' + category["nom"] + ".csv") == 0:
                 writer.writerow(en_tete)
-
-            for bloc_link_livre in all_link_livre:
-                all_a_livre = bloc_link_livre.find_all("a")
-
-                for link_livre in all_a_livre:
-                    link = url + 'catalogue/' + link_livre.get('href')[9:]
-                    writer.writerows([get_detail_livre(link, with_picture, cat_dir)])
+            for link_livre in all_link_livre:
+                writer.writerows([get_detail_livre(link_livre, with_picture, cat_dir)])
 
 
-url_choice = ""
+if __name__ == "__main__":
 
-# entete du fichier CSV
-en_tete = [
-    "product_page_url",
-    "universal_product_code (upc)",
-    "title",
-    "price_including_tax",
-    "price_excluding_tax",
-    "number_available",
-    "product_description",
-    "category",
-    "review_rating",
-    "image_url"
-]
+    url_choice = ""
 
-# On gère le choix du menu principal
-allowed_menu_choice = ["1", "2", "3", "exit"]
-allowed_with_picture = ["y", "n"]
+    # entete du fichier CSV
+    en_tete = [
+        "product_page_url",
+        "universal_product_code (upc)",
+        "title",
+        "price_including_tax",
+        "price_excluding_tax",
+        "number_available",
+        "product_description",
+        "category",
+        "review_rating",
+        "image_url"
+    ]
 
-menu_choice = get_menu()
-index_cat_in_dict = None
+    # On gère le choix du menu principal
+    allowed_menu_choice = ["1", "2", "3", "exit"]
+    allowed_with_picture = ["y", "n"]
 
-# Tant que le choix est invalide, on demande de ressaisir
-while not(menu_choice in allowed_menu_choice):
-    print("Le choix n'est pas valide")
     menu_choice = get_menu()
+    index_cat_in_dict = None
 
-if menu_choice == "1":
-    url_choice = get_select_url()
-    test_url = requests.get(url_choice)
-    while test_url.status_code != 200:
-        print("URL invalide")
+    # Tant que le choix est invalide, on demande de ressaisir
+    while not(menu_choice in allowed_menu_choice):
+        print("Le choix n'est pas valide")
+        menu_choice = get_menu()
+
+    if menu_choice == "1":
         url_choice = get_select_url()
         test_url = requests.get(url_choice)
+        while test_url.status_code != 200:
+            print("URL invalide")
+            url_choice = get_select_url()
+            test_url = requests.get(url_choice)
 
-    with_picture = with_picture()
+        with_picture = with_picture()
 
-    detail_livre = get_detail_livre(url_choice, with_picture, "")
-    charger_donnees(
-        "detail_livre.csv",
-        en_tete,
-        detail_livre
-    )
+        detail_livre = get_detail_livre(url_choice, with_picture, "")
+        charger_donnees("detail_livre.csv", en_tete, detail_livre)
 
-elif menu_choice == "2":
-    # On récupère un dictionnaire de toutes les catégories
-    all_category = get_dict_all_category()
-    # On affiche l'input de selection de la catégorie
-    cat_select = input_select_cat()
-    # On récupère la clé de la catégorie recherchée dans le dictionnaire de toutes les catégories, sinon None
-    index_cat_in_dict = key_in_dict(all_category, "nom", cat_select)
-
-    # Tant qu'on a pas de clé trouvée, on redemande de saisir la catégorie, jusqu'a en avoir une valide
-    while not index_cat_in_dict:
-        print("La catégorie saisie n'éxiste pas")
+    elif menu_choice == "2":
+        # On récupère un dictionnaire de toutes les catégories
+        all_category = get_dict_all_category()
+        # On affiche l'input de selection de la catégorie
         cat_select = input_select_cat()
+        # On récupère la clé de la catégorie recherchée dans le dictionnaire de toutes les catégories, sinon None
         index_cat_in_dict = key_in_dict(all_category, "nom", cat_select)
 
-    with_picture = with_picture()
+        # Tant qu'on a pas de clé trouvée, on redemande de saisir la catégorie, jusqu'a en avoir une valide
+        while index_cat_in_dict is None:
+            print("La catégorie saisie n'éxiste pas")
+            cat_select = input_select_cat()
+            index_cat_in_dict = key_in_dict(all_category, "nom", cat_select)
 
-    get_all_book_detail([all_category[index_cat_in_dict]], with_picture)
+        with_picture = with_picture()
 
-elif menu_choice == "3":
-    # On récupère un dictionnaire de toutes les catégories
-    all_category = get_dict_all_category()
+        get_all_book_detail([all_category[index_cat_in_dict]], with_picture)
 
-    with_picture = with_picture()
+    elif menu_choice == "3":
+        # On récupère un dictionnaire de toutes les catégories
+        all_category = get_dict_all_category()
 
-    get_all_book_detail(all_category, with_picture)
+        with_picture = with_picture()
 
-elif menu_choice == "exit":
-    exit()
+        get_all_book_detail(all_category, with_picture)
+
+    elif menu_choice == "exit":
+        exit()
