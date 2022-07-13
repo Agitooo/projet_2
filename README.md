@@ -34,7 +34,11 @@ Pour installer les packages spécifiés dans le fichier requirements.txt il faut
 
 # **SCRIPT**
 
-Lors de l'exécution du script _script.py_, il y aura un menu dans la console, qui permettra de choisir 
+Lors de l'exécution du script via la commande
+
+    python script.py
+
+Il y aura un menu dans la console, qui permettra de choisir 
 ce que l'on souhaite effectuer
 
 Il y a plusieurs possibilités :
@@ -44,7 +48,7 @@ Il y a plusieurs possibilités :
     3 -  Récuperer l'ensemble des informations des livres de toutes les catégories (choix 3)
     0 -  Quitter (choix 0)
 
-Il suffit d'écrire 1, 2, 3 ou exit
+Il suffit d'écrire 1, 2, 3 ou 0
 
 Dans chacun des choix 1, 2 ou 3, il est également possible de choisir si l'on souhaite récupérer les images de 
 couverture. 
@@ -77,4 +81,6 @@ Le choix '3'
 Une fois terminé, il y aura toutes les catégories récupérées, chacune dans un dossier propre contenant le CSV
 et le dossier pictures de chacune des images des livres de la catégorie si le choix 'y' a été fait.
 
-Le choix 'exit' permet juste de quitter le script
+Le choix '0' 
+
+Permet de quitter le script
