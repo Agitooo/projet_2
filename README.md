@@ -42,7 +42,7 @@ Il y a plusieurs possibilités :
     1 -  Récupérer les informations d'un livre via son URL (choix 1)
     2 -  Récupérer l'ensemble des informations des livres d'une catégorie (choix 2)
     3 -  Récuperer l'ensemble des informations des livres de toutes les catégories (choix 3)
-    exit -  Quitter (exit)
+    0 -  Quitter (choix 0)
 
 Il suffit d'écrire 1, 2, 3 ou exit
 

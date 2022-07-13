@@ -8,10 +8,10 @@ url = "http://books.toscrape.com/"
 
 def get_menu():
     return input("Veuillez sélectionner votre action parmi les choix suivants \n "
-                 "1    - Récupérer les détails d'un livre par son url \n "
-                 "2    - Récupérer les livres d'une catégorie sélectionnée \n "
-                 "3    - Récupération de l'intégralité des livres du site \n "
-                 "exit - Quitter\n "
+                 "1 - Récupérer les détails d'un livre par son url \n "
+                 "2 - Récupérer les livres d'une catégorie sélectionnée \n "
+                 "3 - Récupération de l'intégralité des livres du site \n "
+                 "0 - Quitter\n "
                  " ").strip().lower()
 
 
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     ]
 
     # On gère le choix du menu principal
-    allowed_menu_choice = ["1", "2", "3", "exit"]
+    allowed_menu_choice = ["1", "2", "3", "0"]
     allowed_with_picture = ["y", "n"]
 
     menu_choice = get_menu()
@@ -245,5 +245,5 @@ if __name__ == "__main__":
 
         get_all_book_detail(all_category, with_picture)
 
-    elif menu_choice == "exit":
+    elif menu_choice == "0":
         exit()
