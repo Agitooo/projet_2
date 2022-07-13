@@ -111,7 +111,7 @@ def get_detail_livre(url_detail_livre, with_picture=False, cat_dir=""):
 
     if with_picture:
         name_picture = title.lower()
-        char_replace = "!#$%^&*()?,': ’\\/\"."
+        char_replace = "!#$%^&*()?,': ’“\\/\"."
         for char in char_replace:
             name_picture = name_picture.replace(char, "_")
 
