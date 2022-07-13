@@ -7,21 +7,21 @@ url = "http://books.toscrape.com/"
 
 
 def get_menu():
-    return input("Veuillez selectionner votre action parmis les choix suivants \n "
+    return input("Veuillez sélectionner votre action parmi les choix suivants \n "
                  "1    - Récupérer les détails d'un livre par son url \n "
-                 "2    - Récupérer les livres d'une catégorie selectionnée \n "
-                 "3    - Récupération de l'integralité des livres du site \n "
+                 "2    - Récupérer les livres d'une catégorie sélectionnée \n "
+                 "3    - Récupération de l'intégralité des livres du site \n "
                  "exit - Quitter\n "
                  " ").strip().lower()
 
 
 def get_select_url():
-    return input("Veuillez saisir l'url du livre : ").strip().lower()
+    return input("Veuillez saisir l'URL du livre : ").strip().lower()
 
 
 # On affiche l'input de selection de la catégorie
 def input_select_cat():
-    return input("Veuillez saisir la catégorie à récuperer : ").strip().lower()
+    return input("Veuillez saisir la catégorie à récupérer : ").strip().lower()
 
 
 def with_picture():
