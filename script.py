@@ -51,18 +51,18 @@ def get_dict_all_category():
     soup = BeautifulSoup(page, "html.parser")
 
     # On récupère toutes les catégories de la page principale
-    toutes_categorie_ul = soup.find_all("ul", class_="nav-list")
+    all_category_ul = soup.find_all("ul", class_="nav-list")
 
-    categorie = []
+    category = []
 
-    for bloc_categorie in toutes_categorie_ul:
-        all_a_cat = bloc_categorie.find_all("a")
+    for bloc_category in all_category_ul:
+        all_a_cat = bloc_category.find_all("a")
         for a_info in all_a_cat:
-            categorie.append({'nom': a_info.get_text().strip().lower(), 'url': a_info.get('href')})
+            category.append({'nom': a_info.get_text().strip().lower(), 'url': a_info.get('href')})
     # On supprime la 1ere catégorie qui est un titre
-    categorie.pop(0)
-    # categorie = Tableau des catégories + url associées
-    return categorie
+    category.pop(0)
+    # catégorie = Tableau des catégories + url associées
+    return category
 
 
 # charger la donnée dans un fichier csv
@@ -73,7 +73,7 @@ def charger_donnees(
 ):
     with open(nom_fichier, 'w', encoding="utf8", newline='') as fichier_csv:
         writer = csv.writer(fichier_csv, delimiter=',')
-        # Si le fichier est vide, alors on met l'entete
+        # Si le fichier est vide, alors on met l'entête
         if os.path.getsize(nom_fichier) == 0:
             writer.writerow(en_tete)
         writer.writerows([detail_livre])
@@ -100,13 +100,13 @@ def get_detail_livre(url_detail_livre, with_picture=False, cat_dir=""):
 
     product_description = soup_detail_livre.find_all('p')[3].get_text().strip()
 
-    # La catégorie est dans le fil d'ariane
+    # La catégorie est dans le fil d'Ariane
     category = soup_detail_livre.find_all("a")[3].get_text().strip()
 
     review_rating = soup_detail_livre.find('p', class_="star-rating").get('class')[1]
 
-    # l'url de l'image n'est pas absolue et commence par ../..
-    # donc on les retire et on concatène avec l'url du site pour avoir l'url complete
+    # l'URL de l'image n'est pas absolue et commence par ../..
+    # donc on les retire et on concatène avec l'URL du site pour avoir l'URL complete
     image_url = url + soup_detail_livre.find('img').get('src')[6:]
 
     if with_picture:
@@ -149,7 +149,7 @@ def get_list_book_by_category(category_url, link=None, page="index.html"):
             a_pagination = link_pagination.find_all("a")
             url_pagination = a_pagination[0].get('href')
             # On rappelle la fonction dans laquelle on
-            # est s'il y a une page suivante et on rajoute les livres a la suite
+            # est s'il y a une page suivante et on rajoute les livres à la suite
             link = get_list_book_by_category(category_url, link, url_pagination)
 
     return link
@@ -160,7 +160,7 @@ def get_all_book_detail(category_dict, with_picture=False):
     for category in category_dict:
         url_category_split = category['url'][:-10]
         category_url = url + url_category_split
-        # retrait de index et rajouté param fontion par defaut page1.html
+
         all_link_livre = get_list_book_by_category(category_url)
         cat_dir = category["nom"].strip().replace(" ", "_").lower()
         if not os.path.exists(cat_dir):
@@ -169,7 +169,7 @@ def get_all_book_detail(category_dict, with_picture=False):
             os.makedirs(cat_dir + "/pictures")
         with open(cat_dir + '/' + category["nom"] + ".csv", 'w', encoding="utf8", newline='') as fichier_csv:
             writer = csv.writer(fichier_csv, delimiter=',')
-            # Si le fichier est vide, alors on met l'entete
+            # Si le fichier est vide, alors on met l'entête
             if os.path.getsize(cat_dir + '/' + category["nom"] + ".csv") == 0:
                 writer.writerow(en_tete)
             for link_livre in all_link_livre:
@@ -180,7 +180,7 @@ if __name__ == "__main__":
 
     url_choice = ""
 
-    # entete du fichier CSV
+    # entête du fichier CSV
     en_tete = [
         "product_page_url",
         "universal_product_code (upc)",
@@ -227,9 +227,9 @@ if __name__ == "__main__":
         # On récupère la clé de la catégorie recherchée dans le dictionnaire de toutes les catégories, sinon None
         index_cat_in_dict = key_in_dict(all_category, "nom", cat_select)
 
-        # Tant qu'on a pas de clé trouvée, on redemande de saisir la catégorie, jusqu'a en avoir une valide
+        # Tant qu'on n'a pas de clé trouvée, on redemande de saisir la catégorie, jusqu'a en avoir une valide
         while index_cat_in_dict is None:
-            print("La catégorie saisie n'éxiste pas")
+            print("La catégorie saisie n'existe pas")
             cat_select = input_select_cat()
             index_cat_in_dict = key_in_dict(all_category, "nom", cat_select)
 
