@@ -34,7 +34,7 @@ Pour installer les packages spécifiés dans le fichier requirements.txt il faut
 
 # **SCRIPT**
 
-Lors du lancement du script, il y aura un menu, dans la console, qui permettra de choisir 
+Lors de l'exécution du script _script.py_, il y aura un menu dans la console, qui permettra de choisir 
 ce que l'on souhaite effectuer
 
 Il y a plusieurs possibilités :
