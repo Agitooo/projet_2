@@ -1,17 +1,48 @@
-# projet_2
-projet 2 python openclassrooms
+# Projet 2 python openclassrooms
 
-Ce script permet de récupérer les informations des livres sur le site booktoscrap.
+Ce script permet de récupérer les informations des livres sur le site http://books.toscrape.com/.
+
+La version de **Python** à utiliser : _**3.10.5**_
+
+# **ENVIRONNEMENT VIRTUEL**
+
+Création de l'environnement virtuel :
+
+
+Pour créer l'environnement virtuel il faut exécuter la commande suivante à la racine du projet :
+
+    python -m venv env
+
+
+Puis la commande suivante pour démarrer l'environnement :
+
+-   sous Linux
+
+    
+    source env/bin/activate
+
+-   sous Windows
+
+
+    env/Scripts/activate.bat
+
+
+Pour installer les packages spécifiés dans le fichier requirements.txt il faut exécuter la commande suivante :
+
+    pip install -r requirements.txt
+
+
+# **SCRIPT**
 
 Lors du lancement du script, il y aura un menu, dans la console, qui permettra de choisir 
 ce que l'on souhaite effectuer
 
 Il y a plusieurs possibilités :
 
-    -   1- Récupérer les informations d'un livre via son URL (choix 1)
-    -   2- Récupérer l'ensemble des informations des livres d'une catégorie (choix 2)
-    -   3- Récuperer l'ensemble des informations des livres de toutes les catégories (choix 3)
-    -   exit- Quitter (exit)
+    1 -  Récupérer les informations d'un livre via son URL (choix 1)
+    2 -  Récupérer l'ensemble des informations des livres d'une catégorie (choix 2)
+    3 -  Récuperer l'ensemble des informations des livres de toutes les catégories (choix 3)
+    exit -  Quitter (exit)
 
 Il suffit d'écrire 1, 2, 3 ou exit
 
